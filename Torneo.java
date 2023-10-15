@@ -1,3 +1,5 @@
+import java.io.File;
+import java.io.FileNotFoundException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
@@ -10,6 +12,12 @@ public class Torneo {
         Scanner scan = new Scanner(System.in);
         boolean continuar=true,continuarSubmenu = true;
         int menu, subMenu;
+        cargarArchivos();
+        try {
+            Thread.sleep(1000);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
         //inicio del menu
         while(continuar){
             System.out.println("***** Menú de Jugadores *****");
@@ -23,6 +31,7 @@ public class Torneo {
             menu = scan.nextInt();
             scan.nextLine();
 
+
             switch (menu) {
                 case 1:
                     System.out.println("BIENVENIDO AL INGRESO DEL JUGADOR");
@@ -32,22 +41,19 @@ public class Torneo {
 
                     switch(subMenu){
                         case 1:
-                            continuarSubmenu = true;
                             while(continuarSubmenu){
                                 System.out.println("INFORMACION DE JUGADOR LIBERO");
                                 
 
-                                continuarSubmenu = volverAlMenu(scan);
+                                continuarSubmenu = volverAlMenu(scan, " a ingresar un jugador? ");
                             }
                             break;
                         case 2:
                             while(continuarSubmenu){
-                                
-                                //captura de datos del jugador portero
                                 System.out.println("INFORMACION DE JUGADOR PASADOR");
 
                                 
-                                continuarSubmenu = volverAlMenu(scan);
+                                continuarSubmenu = volverAlMenu(scan, " a ingresar un jugador? ");
                             }
                             break;
                         
@@ -56,7 +62,7 @@ public class Torneo {
                                 System.out.println("INFORMACION DE JUGADOR AUXILIAR");
                                 
 
-                                continuarSubmenu = volverAlMenu(scan);
+                                continuarSubmenu = volverAlMenu(scan, " a ingresar un jugador? ");
                             }
                             break;
                         case 4:
@@ -65,7 +71,7 @@ public class Torneo {
                                 System.out.println("INFORMACION DE JUGADOR OPUESTO");
 
                                 
-                                continuarSubmenu = volverAlMenu(scan);
+                                continuarSubmenu = volverAlMenu(scan, " a ingresar un jugador? ");
                             }
                             break;
                         default:
@@ -117,9 +123,8 @@ public class Torneo {
 
                     //meter datos a csv con una función
 
+                    System.exit(0);
 
-
-                    continuar=false;
                     break;
                 default:
                     System.out.println("Opción no válida. Por favor, seleccione una opción válida.");
@@ -127,20 +132,39 @@ public class Torneo {
                     break;
             }
             
-            continuar = volverAlMenu(scan);
+            continuar = volverAlMenu(scan," al menú? ");
+            
 
         }
         scan.close();
     }
 
-    private static boolean volverAlMenu(Scanner scanner) {
-        System.out.println("¿Desea volver al menú? (1: Sí, 0: No): ");
+    private static void cargarArchivos(){
+        try {
+            File archivosTorneo = new File("jugadoresTorneo.csv");
+            Scanner lector = new Scanner(archivosTorneo);
+            
+            System.out.println("Archivo " + archivosTorneo + " cargado correctamente!!");
+            lector.close();
+        } catch (FileNotFoundException e) {
+            System.out.println("Upsi");
+            e.printStackTrace();
+        }
+    }
+
+    private static boolean volverAlMenu(Scanner scanner, String eleccion) {
+        System.out.println("¿Desea volver "+ eleccion+" (1: Sí, 0: No): ");
         int opcion = scanner.nextInt();
         scanner.nextLine();
         if (opcion == 0) {
-            System.out.println("Saliendo del programa.");
-            //meter datos a csv con una función
-            return false;
+            if(eleccion.equals(" a ingresar un jugador? ")){
+                System.out.println("");
+                return false;
+            }else{
+                System.out.println("Saliendo del programa.");
+                //meter datos a csv con una función
+                return false;
+            }
         } else {
             
             return true;
