@@ -7,16 +7,27 @@ public class Libero extends Jugador {
         super(nombre, pais, errores, aces, totalServicios);
         this.recibidosEfectivos = recibidosEfectivos;
         this.tipo = "Libero";
+        efectividad = ((this.recibidosEfectivos - this.errores) * 100 / (this.recibidosEfectivos + this.errores)) + this.aces * 100 / this.totalServicios;
+
     }
 
     @Override
-    public void calcularEfectividad() {
-        efectividad = ((this.recibidosEfectivos - this.errores) * 100 / (this.recibidosEfectivos + this.errores)) + this.aces * 100 / this.totalServicios;
+    public int getEfectividad() {
+        return efectividad;
     }
 
 
-
-
+    @Override
+    public String toString() {
+        return "Tipo: " + tipo + "\n" +
+               "Nombre: " + nombre + "\n" +
+               "País: " + pais + "\n" +
+               "Errores: " + errores + "\n" +
+               "Aces: " + aces + "\n" +
+               "Total de Servicios: " + totalServicios + "\n" +
+               "Recibidos Efectivos: " + recibidosEfectivos+ "\n" +
+               "Efectividad: " + efectividad;
+    }
 
 
 

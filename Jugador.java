@@ -47,11 +47,11 @@ public abstract class Jugador {
         return totalServicios;
     }
 
-    public int getEfectividad() {
-        return efectividad;
-    }
+    public abstract String toString();
 
-    public abstract void calcularEfectividad();
+    //se omitio el metodo calcularEfectividad porque asi todo el proceso se hace en uno solo
+    public abstract int getEfectividad();
+
 
 
 

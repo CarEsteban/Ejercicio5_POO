@@ -9,14 +9,29 @@ public class Auxiliar extends Jugador {
         this.bloqueosEfectivos = bloqueosEfectivos;
         this.bloqueosFallidos = bloqueosFallidos;
         this.tipo = "Auxiliar";
+        efectividad = ((this.ataques + this.bloqueosEfectivos - this.bloqueosFallidos - this.errores) * 100 / (this.ataques + this.bloqueosEfectivos + this.bloqueosFallidos + this.errores)) + this.aces * 100 / this.totalServicios;
+
     }
 
     @Override
-    public void calcularEfectividad() {
-        efectividad = ((this.ataques + this.bloqueosEfectivos - this.bloqueosFallidos - this.errores) * 100 / (this.ataques + this.bloqueosEfectivos + this.bloqueosFallidos + this.errores)) + this.aces * 100 / this.totalServicios;
+    public int getEfectividad() {
+        return efectividad;
     }
 
 
+    @Override
+    public String toString() {
+        return "Tipo: " + tipo + "\n" +
+               "Nombre: " + nombre + "\n" +
+               "País: " + pais + "\n" +
+               "Errores: " + errores + "\n" +
+               "Aces: " + aces + "\n" +
+               "Total de Servicios: " + totalServicios + "\n" +
+               "Ataques: " + ataques + "\n" +
+               "Bloqueos Efectivos: " + bloqueosEfectivos + "\n" +
+               "Bloqueos Fallidos: " + bloqueosFallidos+ "\n" +
+               "Efectividad: " + efectividad;
+    }
 
 
 
