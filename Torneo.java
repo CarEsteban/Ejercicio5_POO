@@ -181,13 +181,55 @@ public class Torneo {
                     break;
                 case 4:
                     System.out.println("PASADORES CON MAS DE 80% DE EFECTIVIDAD");
+                    jugadores.clear();
+
+                    try (BufferedReader br = new BufferedReader(new FileReader(archivosTorneo))) {
+                        String linea;
+                        boolean esEncabezado = true;
+            
+                        while ((linea = br.readLine()) != null) {
+                            String[] campos = linea.split(",");
+                            
+                            if (esEncabezado) {
+                                esEncabezado = false;
+                            } else if(campos != null) {
+                                    if (campos[2].equals("Pasador")) {
+                                        // Asignar variables a cada campo
+                                        String nombre = campos[0];
+                                        String pais = campos[1];
+                                        int errores = Integer.parseInt(campos[3]);
+                                        int aces = Integer.parseInt(campos[4]);
+                                        int totalServicios = Integer.parseInt(campos[5]);
+                                        int pases = Integer.parseInt(campos[7]);
+                                        int fintasEfectivas = Integer.parseInt(campos[8]);
+                                        
+                                        Jugador x = new Pasador(nombre, pais, errores, aces, totalServicios, pases, fintasEfectivas);
+                                        jugadores.add(x);
+                                    }
+                                
+                            }
+                        }
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
+
+                    if(jugadores.isEmpty()){
+                        System.out.println("No hay pasadores en la lista.");
+                    }else{
+                        for (Jugador jugador : jugadores) {
+                            if(jugador.getEfectividad()>=80){
+                                System.out.println("--> "+jugador.getNombre() + ", con efectividad de: " + jugador.getEfectividad());
+                            }else{
+                                System.out.println("Ninguno de los jugadores tiene más del 80% de efectividad");
+                            }
+                                
+                        }
+                    }
                     
                     break;
                 case 5:
                     System.out.println("Saliendo del programa.");
 
-                    //meter datos a csv con una función
-                    guardarDatos(jugadores,archivosTorneo);
 
                     System.exit(0);
 
@@ -367,8 +409,6 @@ public class Torneo {
         if (opcion == 0) {
             if(eleccion.equals(" al menú? ")){
                 System.out.println("Saliendo del programa....");
-                    //meter datos a csv con una función
-                    guardarDatos(jugadores,archivosTorneo);
                 return false;
             }else{
                 System.out.println("Saliendo de la opción.");
