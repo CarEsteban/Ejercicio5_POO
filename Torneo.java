@@ -216,13 +216,17 @@ public class Torneo {
                     if(jugadores.isEmpty()){
                         System.out.println("No hay pasadores en la lista.");
                     }else{
+                        int cantidadJugadores=0;
                         for (Jugador jugador : jugadores) {
                             if(jugador.getEfectividad()>=80){
+                                cantidadJugadores++;
                                 System.out.println("--> "+jugador.getNombre() + ", con efectividad de: " + jugador.getEfectividad());
-                            }else{
-                                System.out.println("Ninguno de los jugadores tiene más del 80% de efectividad");
                             }
                                 
+                        }
+
+                        if(cantidadJugadores==0){
+                            System.out.println("Ninguno de los jugadores tiene más del 80% de efectividad");
                         }
                     }
                     
