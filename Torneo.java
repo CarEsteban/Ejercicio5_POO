@@ -58,7 +58,9 @@ public class Torneo {
                                 System.out.println("INFORMACION DE JUGADOR LIBERO");
                                 
                                 agregarDatos(jugadores, scan, "Libero");
-                                
+                                            
+                                //meter datos a csv con una función
+                                guardarDatos(jugadores,archivosTorneo);
                                 continuarSubmenu = volverAlMenu(scan, " a ingresar un jugador? ",jugadores,archivosTorneo);
                             
                             }
@@ -68,6 +70,8 @@ public class Torneo {
                                 System.out.println("INFORMACION DE JUGADOR PASADOR");
 
                                 agregarDatos(jugadores, scan, "Pasador");
+                                //meter datos a csv con una función
+                                guardarDatos(jugadores,archivosTorneo);
                                 
                                 continuarSubmenu = volverAlMenu(scan, " a ingresar un jugador? ",jugadores,archivosTorneo);
                             }
@@ -78,6 +82,8 @@ public class Torneo {
                                 System.out.println("INFORMACION DE JUGADOR AUXILIAR");
                                 
                                 agregarDatos(jugadores, scan, "Auxiliar");
+                                //meter datos a csv con una función
+                                guardarDatos(jugadores,archivosTorneo);
 
                                 continuarSubmenu = volverAlMenu(scan, " a ingresar un jugador? ",jugadores,archivosTorneo);
                             }
@@ -88,6 +94,8 @@ public class Torneo {
                                 System.out.println("INFORMACION DE JUGADOR OPUESTO");
 
                                 agregarDatos(jugadores, scan, "Opuesto");
+                                //meter datos a csv con una función
+                                guardarDatos(jugadores,archivosTorneo);
                                 
                                 continuarSubmenu = volverAlMenu(scan, " a ingresar un jugador? ",jugadores,archivosTorneo);
                             }
@@ -102,8 +110,6 @@ public class Torneo {
                     System.out.println("MOSTRAR TODOS LOS JUGADORES");
                     System.out.println("============================:");
 
-                    
-
 
                     try (BufferedReader br = new BufferedReader(new InputStreamReader(new FileInputStream(archivosTorneo), "UTF-8"))) {
                         String linea;
@@ -111,16 +117,13 @@ public class Torneo {
                         String[] encabezado = null;
             
                         while ((linea = br.readLine()) != null) {
-                            // Dividir la línea en campos utilizando la coma como separador
                             String[] campos = linea.split(",");
             
-                            // Si es la primera línea, trata como encabezado
                             if (esEncabezado) {
                                 encabezado = campos;
                                 esEncabezado = false;
                             } else {
                                 System.out.println("----------------------------------------");
-                                // Muestra los datos junto con el encabezado
                                 for (int i = 0; i < campos.length; i++) {
                                     System.out.println(encabezado[i] + ": " + campos[i]);
                                 }
@@ -132,36 +135,53 @@ public class Torneo {
 
                     break;
                 case 3:
-                    System.out.println("TOP 3 MEJORES PORTEROS");
+                    System.out.println("TOP 3 MEJORES LÍBEROS");
 
-                    if (jugadores.isEmpty()) {
-                        System.out.println("No hay porteros en la lista.");
-                    } else {
-                        Comparator<Jugador> comparadorEfectividad = Comparator.comparingInt(Jugador::getEfectividad);
+                    jugadores.clear();
 
-                        Collections.sort(jugadores, comparadorEfectividad.reversed());
-
-                        int numPorterosAMostrar = 3;
-                        for (int i = 0; i < Math.min(numPorterosAMostrar, jugadores.size()); i++) {
-                            System.out.println("Top " + i+1 +": " + jugadores.get(i).getNombre() + ", con efectividad de: " + jugadores.get(i).getEfectividad());
+                    try (BufferedReader br = new BufferedReader(new FileReader(archivosTorneo))) {
+                        String linea;
+                        boolean esEncabezado = true;
+            
+                        while ((linea = br.readLine()) != null) {
+                            String[] campos = linea.split(",");
+                            
+                            if (esEncabezado) {
+                                esEncabezado = false;
+                            } else if(campos != null) {
+                                    if (campos[2].equals("Libero")) {
+                                        // Asignar variables a cada campo
+                                        String nombre = campos[0];
+                                        String pais = campos[1];
+                                        int errores = Integer.parseInt(campos[3]);
+                                        int aces = Integer.parseInt(campos[4]);
+                                        int totalServicios = Integer.parseInt(campos[5]);
+                                        int recibidosEfectivos = Integer.parseInt(campos[6]);
+                                        
+                                        Jugador x = new Libero(nombre, pais, errores, aces, totalServicios, recibidosEfectivos);
+                                        jugadores.add(x);
+                                    }
+                                
+                            }
                         }
-                    }   
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
 
+
+                    Comparator<Jugador> comparadorEfectividad = Comparator.comparingInt(Jugador::getEfectividad);
+
+                    Collections.sort(jugadores, comparadorEfectividad.reversed());
+
+                    int numLiberos = 3;
+                    for (int i = 0; i < numLiberos; i++) {
+                        System.out.println("Top " + (i+1) +": " + jugadores.get(i).getNombre() + ", con efectividad de: " + jugadores.get(i).getEfectividad());
+                    }
 
                     break;
                 case 4:
-                    System.out.println("EXTREMOS CON MAS DE 85% DE EFECTIVIDAD");
+                    System.out.println("PASADORES CON MAS DE 80% DE EFECTIVIDAD");
                     
-                    if(jugadores.isEmpty()){
-                        System.out.println("No hay extremos en la lista.");
-                    }else{
-                        for (Jugador extremo : jugadores) {
-                            if(extremo.getEfectividad()>=85){
-                                System.out.println("--> "+extremo.getNombre() + ", con efectividad de: " + extremo.getEfectividad());
-                            }
-                                
-                        }
-                    }
                     break;
                 case 5:
                     System.out.println("Saliendo del programa.");
