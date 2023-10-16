@@ -19,14 +19,15 @@ public class Libero extends Jugador {
 
     @Override
     public String toString() {
-        return "Tipo: " + tipo + "\n" +
-               "Nombre: " + nombre + "\n" +
-               "País: " + pais + "\n" +
-               "Errores: " + errores + "\n" +
-               "Aces: " + aces + "\n" +
-               "Total de Servicios: " + totalServicios + "\n" +
-               "Recibidos Efectivos: " + recibidosEfectivos+ "\n" +
-               "Efectividad: " + efectividad;
+        return  nombre+","+
+                pais+","+
+                tipo+","+
+                errores+","+
+                aces+","+
+                totalServicios+","+
+                recibidosEfectivos+
+                ",-,-,-,-,-,"+
+                efectividad;
     }
 
 

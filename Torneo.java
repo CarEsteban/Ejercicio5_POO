@@ -1,9 +1,11 @@
 import java.io.BufferedReader;
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.io.InputStreamReader;
 import java.io.PrintWriter;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -34,8 +36,8 @@ public class Torneo {
             System.out.println("***** Menú de Jugadores *****");
             System.out.println("1. Ingresar datos de jugador");
             System.out.println("2. Mostrar todos los jugadores");
-            System.out.println("3. Los 3 mejores porteros");
-            System.out.println("4. Extremos con más de un 80% de efectividad");
+            System.out.println("3. Los 3 mejores líberos");
+            System.out.println("4. Pasadores con más de un 80% de efectividad");
             System.out.println("5. Salir");
             System.out.print("Seleccione una opción: ");
 
@@ -57,7 +59,7 @@ public class Torneo {
                                 
                                 agregarDatos(jugadores, scan, "Libero");
                                 
-                                continuarSubmenu = volverAlMenu(scan, " a ingresar un jugador? ");
+                                continuarSubmenu = volverAlMenu(scan, " a ingresar un jugador? ",jugadores,archivosTorneo);
                             
                             }
                             break;
@@ -67,7 +69,7 @@ public class Torneo {
 
                                 agregarDatos(jugadores, scan, "Pasador");
                                 
-                                continuarSubmenu = volverAlMenu(scan, " a ingresar un jugador? ");
+                                continuarSubmenu = volverAlMenu(scan, " a ingresar un jugador? ",jugadores,archivosTorneo);
                             }
                             break;
                         
@@ -77,7 +79,7 @@ public class Torneo {
                                 
                                 agregarDatos(jugadores, scan, "Auxiliar");
 
-                                continuarSubmenu = volverAlMenu(scan, " a ingresar un jugador? ");
+                                continuarSubmenu = volverAlMenu(scan, " a ingresar un jugador? ",jugadores,archivosTorneo);
                             }
                             break;
                         case 4:
@@ -87,7 +89,7 @@ public class Torneo {
 
                                 agregarDatos(jugadores, scan, "Opuesto");
                                 
-                                continuarSubmenu = volverAlMenu(scan, " a ingresar un jugador? ");
+                                continuarSubmenu = volverAlMenu(scan, " a ingresar un jugador? ",jugadores,archivosTorneo);
                             }
                             break;
                         default:
@@ -100,14 +102,32 @@ public class Torneo {
                     System.out.println("MOSTRAR TODOS LOS JUGADORES");
                     System.out.println("============================:");
 
-                    //validacion si estan vacios los campos
-                    if(jugadores.isEmpty()){
-                        System.out.println("No hay jugadores en la lista.");
-                    }else{
-                        System.out.println("Jugadores existentes:");
-                        for (Jugador jugador: jugadores) {
-                            System.out.println("--> "+jugador.toString());
+                    
+
+
+                    try (BufferedReader br = new BufferedReader(new InputStreamReader(new FileInputStream(archivosTorneo), "UTF-8"))) {
+                        String linea;
+                        boolean esEncabezado = true;
+                        String[] encabezado = null;
+            
+                        while ((linea = br.readLine()) != null) {
+                            // Dividir la línea en campos utilizando la coma como separador
+                            String[] campos = linea.split(",");
+            
+                            // Si es la primera línea, trata como encabezado
+                            if (esEncabezado) {
+                                encabezado = campos;
+                                esEncabezado = false;
+                            } else {
+                                System.out.println("----------------------------------------");
+                                // Muestra los datos junto con el encabezado
+                                for (int i = 0; i < campos.length; i++) {
+                                    System.out.println(encabezado[i] + ": " + campos[i]);
+                                }
+                            }
                         }
+                    } catch (IOException e) {
+                        e.printStackTrace();
                     }
 
                     break;
@@ -147,7 +167,7 @@ public class Torneo {
                     System.out.println("Saliendo del programa.");
 
                     //meter datos a csv con una función
-                    guardarDatos(archivosTorneo);
+                    guardarDatos(jugadores,archivosTorneo);
 
                     System.exit(0);
 
@@ -158,7 +178,7 @@ public class Torneo {
                     break;
             }
             
-            continuar = volverAlMenu(scan," al menú? ");
+            continuar = volverAlMenu(scan," al menú? ",jugadores,archivosTorneo);
             
 
         }
@@ -278,7 +298,7 @@ public class Torneo {
         
     }
 
-    private static void guardarDatos(File archivosTorneo){
+    private static void guardarDatos(ArrayList<Jugador> jugadores,File archivosTorneo){
         
                 StringBuilder contenidoExistente = new StringBuilder();
                 try (BufferedReader br = new BufferedReader(new FileReader(archivosTorneo))) {
@@ -290,12 +310,14 @@ public class Torneo {
                     e.printStackTrace();
                 }
 
-                contenidoExistente.append("datosJugador").append("\n");
+                for(int i=0; i<jugadores.size(); i++){
+                    contenidoExistente.append(jugadores.get(i).toString()).append("\n");
 
-                try (PrintWriter writer = new PrintWriter(new FileWriter(archivosTorneo))) {
-                    writer.print(contenidoExistente.toString());
-                } catch (IOException e) {
-                    e.printStackTrace();
+                    try (PrintWriter writer = new PrintWriter(new FileWriter(archivosTorneo))) {
+                        writer.print(contenidoExistente.toString());
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
                 }
     }
 
@@ -318,14 +340,15 @@ public class Torneo {
         }
     }
 
-    private static boolean volverAlMenu(Scanner scanner, String eleccion) {
+    private static boolean volverAlMenu(Scanner scanner, String eleccion,ArrayList<Jugador> jugadores,File archivosTorneo) {
         System.out.println("¿Desea volver"+ eleccion+" (1: Sí, 0: No): ");
         int opcion = scanner.nextInt();
         scanner.nextLine();
         if (opcion == 0) {
             if(eleccion.equals(" al menú? ")){
                 System.out.println("Saliendo del programa....");
-                //meter datos a csv con una función
+                    //meter datos a csv con una función
+                    guardarDatos(jugadores,archivosTorneo);
                 return false;
             }else{
                 System.out.println("Saliendo de la opción.");
